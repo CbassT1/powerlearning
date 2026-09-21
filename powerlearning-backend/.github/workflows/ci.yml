@@ -1,0 +1,35 @@
+name: PowerLearning CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        # Usamos la versión 24 de Node.js que tienes instalada localmente
+        node-version: [24.x]
+
+    steps:
+    - name: Checkout del código
+      uses: actions/checkout@v4
+    
+    - name: Configurar Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Instalar dependencias
+      run: npm install
+    
+    - name: Ejecutar pruebas unitarias (Jest)
+      run: npm test
+      env:
+        # Pasamos una variable de entorno temporal solo para que las pruebas pasen
+        JWT_SECRET: secreto_de_prueba_pipeline_2026
