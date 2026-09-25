@@ -31,7 +31,7 @@ function AuthView({ setSession, showToast }) {
     const body = isLoginView ? { email, password } : { email, password, role, name };
     
     try {
-      const response = await fetch(`http://localhost:3000/api/auth/${endpoint}`, {
+      const response = await fetch(`https://powerlearning.vercel.app/api/auth/${endpoint}`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body) 
       });
@@ -58,7 +58,7 @@ function AuthView({ setSession, showToast }) {
   const handleAppeal = async () => {
     if (!appealText.trim()) return showToast('⚠️ Escribe el motivo de tu apelación');
     try {
-      const response = await fetch('http://localhost:3000/api/auth/appeals', {
+      const response = await fetch('https://powerlearning.vercel.app/api/auth/appeals', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: blockedData.email, reason: appealText })
       });

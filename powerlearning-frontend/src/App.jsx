@@ -25,28 +25,27 @@ function App() {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
 
-  // Estado del Modal Custom
   const [modalConfig, setModalConfig] = useState({ isOpen: false, title: '', message: '', type: 'confirm', onConfirm: null, danger: false, confirmText: 'Aceptar' });
 
   const closeModal = () => setModalConfig({ ...modalConfig, isOpen: false });
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 3000); };
 
   const fetchCourses = () => {
-    const url = session?.role === 'admin' ? 'http://localhost:3000/api/courses?role=admin' : 'http://localhost:3000/api/courses';
+    const url = session?.role === 'admin' ? 'https://powerlearning.vercel.app/api/courses?role=admin' : 'https://powerlearning.vercel.app/api/courses';
     fetch(url).then(res => res.json()).then(data => setCursos(Array.isArray(data) ? data : [])).catch(console.error);
   };
 
   const fetchUsers = () => {
-    if (session?.role === 'admin') fetch('http://localhost:3000/api/auth/users?role=admin').then(res => res.json()).then(data => setUsuarios(Array.isArray(data) ? data : [])).catch(console.error);
+    if (session?.role === 'admin') fetch('https://powerlearning.vercel.app/api/auth/users?role=admin').then(res => res.json()).then(data => setUsuarios(Array.isArray(data) ? data : [])).catch(console.error);
   };
 
   const fetchAppeals = () => {
-    if (session?.role === 'admin') fetch('http://localhost:3000/api/auth/appeals?role=admin').then(res => res.json()).then(data => setAppeals(Array.isArray(data) ? data : [])).catch(console.error);
+    if (session?.role === 'admin') fetch('https://powerlearning.vercel.app/api/auth/appeals?role=admin').then(res => res.json()).then(data => setAppeals(Array.isArray(data) ? data : [])).catch(console.error);
   };
 
   const fetchMyCourses = () => {
     if (session && session.role !== 'admin') {
-      fetch(`http://localhost:3000/api/courses/my-courses/${session.userId}?role=${session.role}`)
+      fetch(`https://powerlearning.vercel.app/api/courses/my-courses/${session.userId}?role=${session.role}`)
         .then(res => res.json()).then(data => setMisCursos(Array.isArray(data) ? data : [])).catch(console.error);
     }
   };
@@ -57,7 +56,7 @@ function App() {
 
   const handleEnroll = async (courseId) => {
     try {
-      const response = await fetch('http://localhost:3000/api/courses/enroll', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: session.userId, courseId }) });
+      const response = await fetch('https://powerlearning.vercel.app/api/courses/enroll', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: session.userId, courseId }) });
       const data = await response.json();
       if (response.ok) {
         showToast(data.mensaje);
@@ -70,7 +69,7 @@ function App() {
 
   const handleApprove = async (id) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/courses/${id}/approve`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: session.role }) });
+      const res = await fetch(`https://powerlearning.vercel.app/api/courses/${id}/approve`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: session.role }) });
       if (res.ok) { fetchCourses(); fetchMyCourses(); showToast('Curso aprobado'); }
     } catch (error) { showToast('Error de conexión'); }
   };
@@ -83,7 +82,7 @@ function App() {
         if (!reason || !reason.trim()) return showToast('Debes ingresar un motivo');
         closeModal();
         try {
-          const res = await fetch(`http://localhost:3000/api/courses/${id}/reject`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: session.role, reason }) });
+          const res = await fetch(`https://powerlearning.vercel.app/api/courses/${id}/reject`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: session.role, reason }) });
           if(res.ok) { fetchCourses(); fetchMyCourses(); showToast('Curso rechazado'); }
         } catch (error) { console.error(error); }
       }
@@ -97,7 +96,7 @@ function App() {
       onConfirm: async () => {
         closeModal();
         try {
-          const res = await fetch(`http://localhost:3000/api/courses/${id}/suspend`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: session.role }) });
+          const res = await fetch(`https://powerlearning.vercel.app/api/courses/${id}/suspend`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: session.role }) });
           if(res.ok) { fetchCourses(); fetchMyCourses(); setCurrentView('dashboard'); showToast('Curso suspendido'); }
         } catch (error) { console.error(error); }
       }
@@ -112,7 +111,7 @@ function App() {
         if (!reason || !reason.trim()) return showToast('Debes ingresar un motivo');
         closeModal();
         try {
-          const res = await fetch(`http://localhost:3000/api/auth/users/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: session.role, reason }) });
+          const res = await fetch(`https://powerlearning.vercel.app/api/auth/users/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: session.role, reason }) });
           if(res.ok) { showToast('Usuario suspendido exitosamente'); fetchUsers(); setCurrentView('users'); }
         } catch (error) { console.error(error); }
       }
@@ -121,7 +120,7 @@ function App() {
 
   const handleUnblockUser = async (id) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/auth/users/${id}/unblock`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: session.role }) });
+      const res = await fetch(`https://powerlearning.vercel.app/api/auth/users/${id}/unblock`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: session.role }) });
       if(res.ok) { showToast('Usuario reactivado'); fetchUsers(); fetchAppeals(); setCurrentView('users'); }
     } catch (error) { console.error(error); }
   };
@@ -133,7 +132,7 @@ function App() {
       onConfirm: async () => {
         closeModal();
         try {
-          const res = await fetch(`http://localhost:3000/api/auth/users/${id}/hard`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: session.role }) });
+          const res = await fetch(`https://powerlearning.vercel.app/api/auth/users/${id}/hard`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: session.role }) });
           if(res.ok) { showToast('Usuario eliminado de forma definitiva'); fetchUsers(); fetchAppeals(); setCurrentView('users'); }
         } catch (error) { console.error(error); }
       }
@@ -147,7 +146,7 @@ function App() {
   };
   
   const openUserDetail = async (userId) => {
-    const res = await fetch(`http://localhost:3000/api/auth/users/${userId}`);
+    const res = await fetch(`https://powerlearning.vercel.app/api/auth/users/${userId}`);
     const data = await res.json();
     setSelectedUser(data);
     setCurrentView('userDetail');
@@ -190,7 +189,6 @@ function App() {
 
       {currentView === 'users' && session.role === 'admin' && <UsersView usuarios={usuarios} session={session} openUserDetail={openUserDetail} />}
       
-      {/* MODAL GLOBAL PARA CONFIRMACIONES */}
       <Modal 
         isOpen={modalConfig.isOpen} 
         title={modalConfig.title} 

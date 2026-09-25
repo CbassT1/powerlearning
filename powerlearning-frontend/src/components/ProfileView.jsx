@@ -24,7 +24,7 @@ function ProfileView({ session, setSession, showToast, fetchCourses, fetchMyCour
 
   const handleUpdateProfile = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/auth/users/${session.userId}`, {
+      const response = await fetch(`https://powerlearning.vercel.app/api/auth/users/${session.userId}`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: editName, interests: editInterests.join(','), photo_url: editPhoto })
       });
@@ -39,7 +39,7 @@ function ProfileView({ session, setSession, showToast, fetchCourses, fetchMyCour
   const handleChangePassword = async (e) => {
     e.preventDefault();
     try {
-        const response = await fetch(`http://localhost:3000/api/auth/users/${session.userId}/password`, {
+        const response = await fetch(`https://powerlearning.vercel.app/api/auth/users/${session.userId}/password`, {
             method: 'PUT', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ currentPassword, newPassword })
         });
@@ -72,7 +72,7 @@ function ProfileView({ session, setSession, showToast, fetchCourses, fetchMyCour
     e.preventDefault();
     const estimated_time = `${timeQuantity} ${timeUnit}`;
     try {
-      const response = await fetch('http://localhost:3000/api/courses', {
+      const response = await fetch('https://powerlearning.vercel.app/api/courses', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: newCourseTitle, description: newCourseDesc, role: session.role, image_url: newCourseImg, estimated_time, creator_id: session.userId, subject: newCourseSubject })
       });

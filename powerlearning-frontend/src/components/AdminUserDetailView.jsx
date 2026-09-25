@@ -14,7 +14,7 @@ export default function AdminUserDetailView({ session, selectedUser, setCurrentV
 
     const saveAdminChanges = async () => {
         try {
-          const res = await fetch(`http://localhost:3000/api/auth/users/${selectedUser.id}/admin`, {
+          const res = await fetch(`https://powerlearning.vercel.app/api/auth/users/${selectedUser.id}/admin`, {
             method: 'PUT', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ role: session.role, name: editAdminName, userRole: editAdminRole })
           });
@@ -32,7 +32,7 @@ export default function AdminUserDetailView({ session, selectedUser, setCurrentV
             onConfirm: async () => {
                 closeModal();
                 try {
-                    const res = await fetch(`http://localhost:3000/api/auth/users/${selectedUser.id}`, {
+                    const res = await fetch(`https://powerlearning.vercel.app/api/auth/users/${selectedUser.id}`, {
                         method: 'PUT', headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ name: selectedUser.name, interests: selectedUser.interests || '', photo_url: '' })
                     });

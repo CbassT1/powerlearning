@@ -22,7 +22,7 @@ export default function CourseDetailView({ session, selectedCourse, setCurrentVi
             onConfirm: async () => {
                 closeModal();
                 try {
-                    const res = await fetch(`http://localhost:3000/api/courses/${selectedCourse.id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: session.role }) });
+                    const res = await fetch(`https://powerlearning.vercel.app/api/courses/${selectedCourse.id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: session.role }) });
                     if(res.ok) { fetchCourses(); fetchMyCourses(); setCurrentView(backView); showToast('Curso eliminado'); }
                 } catch (error) { console.error(error); }
             }
@@ -36,7 +36,7 @@ export default function CourseDetailView({ session, selectedCourse, setCurrentVi
             onConfirm: async () => {
                 closeModal();
                 try {
-                    const res = await fetch(`http://localhost:3000/api/courses/unenroll`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: session.userId, courseId: selectedCourse.id }) });
+                    const res = await fetch(`https://powerlearning.vercel.app/api/courses/unenroll`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: session.userId, courseId: selectedCourse.id }) });
                     if(res.ok) { fetchMyCourses(); setCurrentView(backView); showToast('Te has dado de baja'); }
                 } catch (error) { console.error(error); }
             }
@@ -45,7 +45,7 @@ export default function CourseDetailView({ session, selectedCourse, setCurrentVi
 
     const handleSaveChanges = async () => {
         try {
-            const res = await fetch(`http://localhost:3000/api/courses/${selectedCourse.id}`, {
+            const res = await fetch(`https://powerlearning.vercel.app/api/courses/${selectedCourse.id}`, {
                 method: 'PUT', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ title: editTitle, description: editDesc, image_url: editImg, estimated_time: editTime, subject: editSubject, role: session.role })
             });
