@@ -1,28 +1,31 @@
 :root {
-  --bg-color: #f5f5f7;
-  --card-bg: #ffffff;
-  --text-primary: #1d1d1f;
-  --text-secondary: #86868b;
-  --border-color: #e5e5ea;
-  --btn-primary: #0071e3;
-  --btn-success: #34c759;
-}
+  /* Fondo super oscuro tipo Aiven */
+  --bg-color: #09090b; 
+  --card-bg: #111113;
+  --text-primary: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --border-color: #27272a;
+  
+  /* Colores Neón Vibrantes */
+  --neon-purple: #7c3aed; 
+  --neon-green: #10b981;
+  --neon-cyan: #06b6d4;
+  --neon-red: #ef4444;
+  --neon-orange: #f59e0b;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-color: #000000;
-    --card-bg: #1c1c1e;
-    --text-primary: #f5f5f7;
-    --text-secondary: #a1a1a6;
-    --border-color: #38383a;
-  }
+  --btn-primary: var(--neon-purple);
+  --btn-success: var(--neon-green);
 }
 
 body {
   background-color: var(--bg-color);
   color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   margin: 0;
+  
+  /* Patrón de puntos retro-tech */
+  background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 /* Diseño fluido en todo el ancho */
@@ -40,6 +43,11 @@ body {
   padding: 20px 0;
   border-bottom: 1px solid var(--border-color);
   margin-bottom: 40px;
+  background-color: rgba(9, 9, 11, 0.8); /* Ligera transparencia */
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .search-container {
@@ -55,29 +63,39 @@ body {
   gap: 10px;
 }
 
+/* Rediseño Tech de Contenedores */
 .section-box {
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 16px;
+  border-radius: 8px; /* Menos redondo, más industrial */
   padding: 30px;
   margin-bottom: 40px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .card {
-  background-color: var(--bg-color);
+  background-color: #000000; /* Negro puro para máximo contraste */
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 24px;
   display: flex;
   flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  border-color: var(--neon-purple);
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.15);
+  transform: translateY(-4px);
 }
 
 .course-img {
   width: 100%;
   height: 220px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 6px;
   margin-bottom: 15px;
+  border: 1px solid var(--border-color);
 }
 
 .grid-cursos {
@@ -86,31 +104,204 @@ body {
   gap: 24px;
 }
 
+/* Inputs de Terminal */
 .input-field {
   width: 100%;
   padding: 14px;
-  background-color: var(--bg-color);
+  background-color: #000000;
   border: 1px solid var(--border-color);
   color: var(--text-primary);
-  border-radius: 8px;
+  border-radius: 6px;
   box-sizing: border-box;
   font-size: 15px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Ocultar las flechas de redimensionamiento */
+.input-field:focus {
+  outline: none;
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+}
+
 textarea.input-field {
   resize: none;
   overflow: hidden;
 }
 
+/* === REDISEÑO DE BOTONES TIPO AIVEN === */
 .btn {
   padding: 12px 20px;
-  border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
 }
-.btn-blue { background-color: var(--btn-primary); color: white; }
-.btn-green { background-color: var(--btn-success); color: white; }
-.btn-outline { background-color: transparent; border: 1px solid var(--btn-primary); color: var(--btn-primary); }
+
+.btn-blue { 
+  background-color: transparent; 
+  color: var(--neon-cyan);
+  border: 2px solid var(--neon-cyan);
+}
+.btn-blue:hover {
+  background-color: var(--neon-cyan);
+  color: #000;
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+}
+
+.btn-green { 
+  background-color: transparent; 
+  color: var(--neon-green);
+  border: 2px solid var(--neon-green);
+}
+.btn-green:hover {
+  background-color: var(--neon-green);
+  color: #000;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+}
+
+.btn-outline { 
+  background-color: transparent; 
+  border: 2px solid var(--text-secondary); 
+  color: var(--text-primary); 
+}
+.btn-outline:hover {
+  border-color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Custom Popup (Toast) */
+.toast-popup {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+  padding: 14px 28px;
+  border-radius: 8px;
+  border: 1px solid var(--neon-purple);
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
+  font-weight: 500;
+  z-index: 1000;
+  animation: slideUp 0.3s ease-out;
+}
+@keyframes slideUp {
+  from { bottom: -50px; opacity: 0; }
+  to { bottom: 30px; opacity: 1; }
+}
+
+/* Tags de Intereses (Badges) */
+.tag-badge {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 6px; /* Más cuadrados */
+  background-color: #000000;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  cursor: pointer;
+  margin: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+.tag-badge.selected {
+  background-color: rgba(124, 58, 237, 0.1);
+  border-color: var(--neon-purple);
+  color: var(--neon-purple);
+}
+.tag-badge:hover:not(.selected) {
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 30px;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  transform: translateY(0);
+  animation: slideIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+    padding: 15px 0;
+  }
+
+  .search-container {
+    margin: 0;
+    max-width: 100%;
+  }
+
+  .header-right {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .section-box {
+    padding: 20px 15px;
+  }
+
+  .grid-cursos {
+    grid-template-columns: 1fr; 
+  }
+
+  .modal-content {
+    padding: 20px;
+    width: 95%;
+  }
+
+  .input-field {
+    font-size: 16px; 
+  }
+  
+  .btn {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 5px;
+  }
+  
+  .header-right .btn {
+    width: auto;
+    flex: 1;
+    min-width: 100px;
+  }
+}
