@@ -1,10 +1,10 @@
-name: PowerLearning CI
+name: Integración Continua Backend (CI)
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ "main" ]
 
 jobs:
   test:
@@ -12,24 +12,22 @@ jobs:
 
     strategy:
       matrix:
-        # Usamos la versión 24 de Node.js que tienes instalada localmente
-        node-version: [24.x]
+        node-version: [18.x]
 
     steps:
-    - name: Checkout del código
-      uses: actions/checkout@v4
-    
+    - name: Descargar repositorio
+      uses: actions/checkout@v3
+
     - name: Configurar Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    
+
     - name: Instalar dependencias
-      run: npm install
-    
-    - name: Ejecutar pruebas unitarias (Jest)
-      run: npm test
+      run: npm ci
+
+    - name: Ejecutar Pruebas y Cobertura
+      run: npm run test
       env:
-        # Pasamos una variable de entorno temporal solo para que las pruebas pasen
-        JWT_SECRET: secreto_de_prueba_pipeline_2026
+        JWT_SECRET: secreto_github_actions_2026
