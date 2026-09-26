@@ -1,17 +1,19 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, getUsers, getUserById, deleteUser, updateProfile, submitAppeal, getAppeals, hardDeleteUser, unblockUser, adminUpdateUser, changePassword  } = require('../controllers/authController');
+const authController = require('../controllers/authController');
+const { verifyToken, verifyRole } = require('../middlewares/authMiddleware');
 
-router.post('/register', register);
-router.post('/login', login);
-router.get('/users', getUsers);
-router.delete('/users/:id', deleteUser);
-router.get('/users/:id', getUserById);
-router.put('/users/:id', updateProfile);
-router.post('/appeals', submitAppeal);
-router.get('/appeals', getAppeals);
-router.delete('/users/:id/hard', hardDeleteUser);
-router.put('/users/:id/unblock', unblockUser);
-router.put('/users/:id/admin', adminUpdateUser);
-router.put('/users/:id/password', changePassword);
+router.post('/register', authController.register);
+router.post('/login', authController.login);
+router.post('/appeals', authController.submitAppeal);
+router.put('/users/:id/password', verifyToken, authController.changePassword);
+router.put('/users/:id', verifyToken, authController.updateProfile);
+router.get('/users/:id', verifyToken, authController.getUserById);
+router.get('/users', verifyToken, verifyRole(['admin']), authController.getUsers);
+router.delete('/users/:id', verifyToken, verifyRole(['admin']), authController.deleteUser);
+router.delete('/users/:id/hard', verifyToken, verifyRole(['admin']), authController.hardDeleteUser);
+router.put('/users/:id/unblock', verifyToken, verifyRole(['admin']), authController.unblockUser);
+router.put('/users/:id/admin', verifyToken, verifyRole(['admin']), authController.adminUpdateUser);
+router.get('/appeals', verifyToken, verifyRole(['admin']), authController.getAppeals);
+
 module.exports = router;

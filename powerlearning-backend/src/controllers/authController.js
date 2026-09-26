@@ -54,7 +54,7 @@ const login = async (req, res) => {
             return res.status(401).json({ error: 'Credenciales inválidas' });
         }
 
-        const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '2h' });
+        const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '24h' });
         res.json({ token, userId: user.id, email: user.email, role: user.role, name: user.name, photo_url: user.photo_url, interests: user.interests });
     } catch (error) {
         console.error('🔴 ERROR EN LOGIN:', error);
@@ -63,10 +63,7 @@ const login = async (req, res) => {
 };
 
 const getUsers = async (req, res) => {
-    const { role } = req.query;
-    if (role !== 'admin') {
-        return res.status(403).json({ error: 'Acceso denegado. Se requiere rol de administrador.' });
-    }
+    // Seguridad gestionada por el Middleware de JWT
     try {
         const [rows] = await pool.query('SELECT id, email, role, name, photo_url, interests, status, block_reason FROM users');
         res.json(rows);
@@ -117,8 +114,6 @@ const updateProfile = async (req, res) => {
     }
 };
 
-// --- NUEVAS FUNCIONES FASE 1 ---
-
 const submitAppeal = async (req, res) => {
     const { email, reason } = req.body;
     try {
@@ -137,8 +132,7 @@ const submitAppeal = async (req, res) => {
 };
 
 const getAppeals = async (req, res) => {
-    const { role } = req.query;
-    if (role !== 'admin') return res.status(403).json({ error: 'Acceso denegado' });
+    // Seguridad gestionada por el Middleware de JWT
     try {
         const [rows] = await pool.query("SELECT * FROM appeals WHERE status = 'pending'");
         res.json(rows);
@@ -149,10 +143,7 @@ const getAppeals = async (req, res) => {
 };
 
 const hardDeleteUser = async (req, res) => {
-    const { role } = req.body;
-    if (role !== 'admin') return res.status(403).json({ error: 'Acceso denegado' });
     try {
-        // Debemos borrar en cascada manualmente para evitar errores de llave foránea
         await pool.query("DELETE FROM enrollments WHERE user_id = ?", [req.params.id]);
         await pool.query("DELETE FROM appeals WHERE user_id = ?", [req.params.id]);
         await pool.query("DELETE FROM users WHERE id = ?", [req.params.id]);
@@ -163,12 +154,10 @@ const hardDeleteUser = async (req, res) => {
     }
 };
 
- const unblockUser = async (req, res) => {
-    const { role } = req.body;
-    if (role !== 'admin') return res.status(403).json({ error: 'Acceso denegado' });
+const unblockUser = async (req, res) => {
     try {
         await pool.query("UPDATE users SET status = 'active', block_reason = NULL WHERE id = ?", [req.params.id]);
-        await pool.query("DELETE FROM appeals WHERE user_id = ?", [req.params.id]); // Limpia el buzón automáticamente
+        await pool.query("DELETE FROM appeals WHERE user_id = ?", [req.params.id]); 
         res.json({ mensaje: "Usuario desbloqueado exitosamente" });
     } catch (error) {
         console.error("🔴 ERROR AL DESBLOQUEAR:", error);
@@ -177,9 +166,7 @@ const hardDeleteUser = async (req, res) => {
 };
 
 const adminUpdateUser = async (req, res) => {
-    const { role: adminRole, name, userRole } = req.body; 
-    if (adminRole !== 'admin') return res.status(403).json({ error: 'Acceso denegado' });
-    
+    const { name, userRole } = req.body; 
     try {
         await pool.query(
             'UPDATE users SET name = ?, role = ? WHERE id = ?',
@@ -192,7 +179,6 @@ const adminUpdateUser = async (req, res) => {
     }
 };
 
-// Cambio de Contraseña (Para todos los usuarios)
 const changePassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body;
     try {
