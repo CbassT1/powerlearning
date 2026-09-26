@@ -12,7 +12,18 @@ import Modal from './components/Modal';
 import './App.css';
 
 function App() {
-  const [session, setSession] = useState(null); 
+  const [session, setSession] = useState(() => {
+    const savedSession = localStorage.getItem('pl_session');
+    return savedSession ? JSON.parse(savedSession) : null;
+  });
+
+  useEffect(() => {
+    if (session) {
+      localStorage.setItem('pl_session', JSON.stringify(session));
+    } else {
+      localStorage.removeItem('pl_session');
+    }
+  }, [session]);
   const [cursos, setCursos] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
   const [appeals, setAppeals] = useState([]); 
