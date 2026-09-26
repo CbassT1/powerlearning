@@ -9,6 +9,11 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    
+    # Esto le dice a GitHub que ejecute todo dentro de la carpeta del backend
+    defaults:
+      run:
+        working-directory: ./powerlearning-backend
 
     strategy:
       matrix:
@@ -23,6 +28,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        cache-dependency-path: ./powerlearning-backend/package-lock.json
 
     - name: Instalar dependencias
       run: npm ci
