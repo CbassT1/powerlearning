@@ -3,7 +3,6 @@ const pool = require('../config/db');
 const getCourses = async (req, res) => {
     try {
         const { role } = req.query;
-        // Hacemos un JOIN para cruzar la tabla de cursos con la de usuarios y obtener el nombre del profesor
         let query = "SELECT c.*, u.name as professor_name FROM courses c LEFT JOIN users u ON c.creator_id = u.id WHERE c.status = 'approved'";
         if (role === 'admin') {
             query = "SELECT c.*, u.name as professor_name FROM courses c LEFT JOIN users u ON c.creator_id = u.id";
@@ -18,9 +17,7 @@ const getCourses = async (req, res) => {
 };
 
 const createCourse = async (req, res) => {
-    const { title, description, role, image_url, estimated_time, creator_id, subject } = req.body;
-    if (role !== 'profesor' && role !== 'admin') return res.status(403).json({ error: 'Acceso denegado' });
-    
+    const { title, description, image_url, estimated_time, creator_id, subject } = req.body;
     try {
         await pool.query(
             'INSERT INTO courses (title, description, image_url, estimated_time, creator_id, subject) VALUES (?, ?, ?, ?, ?, ?)',
@@ -34,8 +31,6 @@ const createCourse = async (req, res) => {
 };
 
 const suspendCourse = async (req, res) => {
-    const { role } = req.body;
-    if (role !== 'admin') return res.status(403).json({ error: 'Acceso denegado' });
     try {
         await pool.query("UPDATE courses SET status = 'suspended' WHERE id = ?", [req.params.id]);
         res.json({ mensaje: 'Curso suspendido exitosamente' });
@@ -46,9 +41,6 @@ const suspendCourse = async (req, res) => {
 };
 
 const approveCourse = async (req, res) => {
-    const { role } = req.body;
-    if (role !== 'admin') return res.status(403).json({ error: 'Acceso denegado' });
-    
     try {
         await pool.query("UPDATE courses SET status = 'approved', rejection_reason = NULL WHERE id = ?", [req.params.id]);
         res.json({ mensaje: 'Curso aprobado' });
@@ -59,8 +51,7 @@ const approveCourse = async (req, res) => {
 };
 
 const rejectCourse = async (req, res) => {
-    const { role, reason } = req.body;
-    if (role !== 'admin') return res.status(403).json({ error: 'Acceso denegado' });
+    const { reason } = req.body;
     try {
         await pool.query("UPDATE courses SET status = 'rejected', rejection_reason = ? WHERE id = ?", [reason || 'No cumple los lineamientos', req.params.id]);
         res.json({ mensaje: 'Curso rechazado' });
@@ -70,10 +61,7 @@ const rejectCourse = async (req, res) => {
     }
 };
 
-// NUEVO: Eliminar curso permanentemente (Admin)
 const deleteCourse = async (req, res) => {
-    const { role } = req.body;
-    if (role !== 'admin') return res.status(403).json({ error: 'Acceso denegado' });
     try {
         await pool.query("DELETE FROM enrollments WHERE course_id = ?", [req.params.id]);
         await pool.query("DELETE FROM courses WHERE id = ?", [req.params.id]);
@@ -120,11 +108,8 @@ const getMyCourses = async (req, res) => {
 };
 
 const updateCourse = async (req, res) => {
-    const { title, description, image_url, estimated_time, subject, role } = req.body;
-    if (role !== 'profesor' && role !== 'admin') return res.status(403).json({ error: 'Acceso denegado' });
-    
+    const { title, description, image_url, estimated_time, subject } = req.body;
     try {
-        // Al editar, lo regresamos a status 'pending' para que el admin lo vuelva a aprobar
         await pool.query(
             "UPDATE courses SET title = ?, description = ?, image_url = ?, estimated_time = ?, subject = ?, status = 'pending', rejection_reason = NULL WHERE id = ?",
             [title, description, image_url, estimated_time, subject, req.params.id]
